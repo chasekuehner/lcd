@@ -1,8 +1,8 @@
 ## LCD 
 
 ##### NEED TO DO:
-- [ ] Decode the number within delay_counter 
-- [ ] Convert to LCD ASCII codes
+- [ ] Decode the rising-edge counts within delay_counter 
+- [ ] Convert delay_counter integer into LCD ASCII codes
 - [ ] Send to latch_output as a display string
 
 latch_output will be the display string
