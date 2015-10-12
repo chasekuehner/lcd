@@ -25,6 +25,7 @@ ENTITY LCD_DISPLAY_nty IS
       reset              : IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
       clock_50           : IN     std_logic;  -- Using the DE2 50Mhz Clk, in order to Genreate the 400Hz signal... clk_count_400hz reset count value must be set to:  <= x"0F424"
       
+      delay_counter      : OUT    std_logic;  -- Implements a delaycounter to track the amount of latches propogated
       lcd_rs             : OUT    std_logic;
       lcd_e              : OUT    std_logic;
       lcd_rw             : OUT    std_logic;
