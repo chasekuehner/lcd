@@ -19,7 +19,7 @@ USE  IEEE.STD_LOGIC_UNSIGNED.all;
 ENTITY LCD_DISPLAY_nty IS
    GENERIC( 
       num_hex_digits : integer := 2;
-      delay_counter  : INTEGER
+      delay_counter  : INTEGER := 0
    );
    
    PORT( 
