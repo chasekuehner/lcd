@@ -1,0 +1,122 @@
+-- This LCD driver is used to interpret a variable, such as delay_counter, and dissolve the integer bit-by-bit for character display
+
+-- If we detect a rising edge across the output, then we have reached a new delay cell
+if (rising_edge(output_delay_counter)) then
+   delay_counter <= delay_counter+'1';
+else   
+   final_stage_detector <= final_stage_detector+'1';
+end if;
+ 
+-- If final stage detector has been tripped more than an arbitrary large number, then we can assume we have reached our final delay cell.
+if (final_stage_detector > '200000') then
+   final_value <= delay_counter;
+   ready_for_decoding <= '1';
+end if;
+
+
+-- If ready for decoding has been tripped, then we can convert the delay_counter value into bits for the LCD lookup conversion
+if (ready_for_decoding = '1') then
+
+-- STAGE 1: Decode the integers into variables   
+         final_value_math <= final_value;
+         final_value_converted_1 <= final_value_math mod 100;
+         final_value_converted_2 <= (final_value_math - final_value_converted_1*100) mod 10;
+         final_value_converted_3 <= (final_value_math - final_value_converted_1*100 - final_value_converted_2*10); 
+         ready_for_stage_2 <= '1';
+-- STAGE 2: Convert the variables into LCD codes
+-- If first digit is 0, we can replace it with x"20" for blank space, otherwise, use 0 with x"30"
+  
+   if (getting_display_ready /= '3' and ready_for_stage_2 = '1') then
+         if (final_value_converted_1 = '0') then
+         LCD_digit_1 = x"20";
+         elsif (final_value_converted_1 = '1') then
+         LCD_digit_1 = x"31";
+         elsif (final_value_converted_1 = '2') then
+         LCD_digit_1 = x"32";
+         elsif (final_value_converted_1 = '3') then
+         LCD_digit_1 = x"33";
+         elsif (final_value_converted_1 = '4') then
+         LCD_digit_1 = x"34";
+         elsif (final_value_converted_1 = '5') then
+         LCD_digit_1 = x"35";
+         elsif (final_value_converted_1 = '6') then
+         LCD_digit_1 = x"36";
+         elsif (final_value_converted_1 = '7') then
+         LCD_digit_1 = x"37";
+         elsif (final_value_converted_1 = '8') then
+         LCD_digit_1 = x"38";
+         elsif (final_value_converted_1 = '9') then
+         LCD_digit_1 = x"39";
+         end if;
+         getting_display_ready <= getting_display_ready+'1';
+         
+         if (final_value_converted_2 = '0') then
+         LCD_digit_2 = x"30";
+         elsif (final_value_converted_2 = '1') then
+         LCD_digit_2 = x"31";
+         elsif (final_value_converted_2 = '2') then
+         LCD_digit_2 = x"32";
+         elsif (final_value_converted_2 = '3') then
+         LCD_digit_2 = x"33";
+         elsif (final_value_converted_2 = '4') then
+         LCD_digit_2 = x"34";
+         elsif (final_value_converted_2 = '5') then
+         LCD_digit_2 = x"35";
+         elsif (final_value_converted_2 = '6') then
+         LCD_digit_2 = x"36";
+         elsif (final_value_converted_2 = '7') then
+         LCD_digit_2 = x"37";
+         elsif (final_value_converted_2 = '8') then
+         LCD_digit_2 = x"38";
+         elsif (final_value_converted_2 = '9') then
+         LCD_digit_2 = x"39";
+         end if;   
+         getting_display_ready <= getting_display_ready+'1';
+         
+         if (final_value_converted_3 = '0') then
+         LCD_digit_3 = x"30";
+         elsif (final_value_converted_3 = '1') then
+         LCD_digit_3 = x"31";
+         elsif (final_value_converted_3 = '2') then
+         LCD_digit_3 = x"32";
+         elsif (final_value_converted_3 = '3') then
+         LCD_digit_3 = x"33";
+         elsif (final_value_converted_3 = '4') then
+         LCD_digit_3 = x"34";
+         elsif (final_value_converted_3 = '5') then
+         LCD_digit_3 = x"35";
+         elsif (final_value_converted_3 = '6') then
+         LCD_digit_3 = x"36";
+         elsif (final_value_converted_3 = '7') then
+         LCD_digit_3 = x"37";
+         elsif (final_value_converted_3 = '8') then
+         LCD_digit_3 = x"38";
+         elsif (final_value_converted_3 = '9') then
+         LCD_digit_3 = x"39";
+         end if; 
+         ready_for_stage_3 <= '1';
+         getting_display_ready <= getting_display_ready+'1';
+   end if; 
+   
+-- STAGE 3: Prepare array for LCD Display String
+if (ready_for_stage_3 = '1') then
+   time_measurement_display <= 
+  (
+-- Line 1               Digit 1  ,  Digit 2  ,  Digit 3           
+          x"20",x"20",LCD_digit_1,LCD_digit_2,LCD_digit_3,x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",
+   
+-- Line 2          D     e    l     a     y           C     e     l     l     s                                      
+          x"20",x"44",x"65",x"6C",x"61",x"79",x"20",x"43",x"65",x"6C",x"6C",x"73",x"20",x"20",x"20",x"20"  
+   ); 
+display_ready <= '1';
+end if;   
+
+end if;    
+   
+-- If display_ready has been tripped, then we can push the converted integers onto the Display
+if (display_ready = '1') then
+   lcd_display_string_01 <= time_measurement_display;
+end if;
+
+ 
+ 
