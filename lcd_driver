@@ -35,12 +35,15 @@
 -- If we detect a rising edge across the output, then we have reached a new delay cell
 if (rising_edge(output_delay_counter)) then
    delay_counter <= delay_counter+'1';
-   delay_counter_previous <= delay_counter-'1';
+else   
+   final_stage_detector <= final_stage_detector+'1';
 end if
  
 -- If we have detected a rising edge at least once, and more than 1 second has passed, then we can assume we have reached our final delay cell by now
 -- Another option may be, if we don't detect a change in delay_counter for more than a second, then we can assume we have reached our final delay cell 
-if (delay_counter = delay_counter_previous)
+
+-- If final stage detector has been tripped more than an arbitrary large number, then we can assume we have reached our final delay cell.
+if (final_stage_detector > 200000)
    display_final_value_as_string <= delay_counter;
 end if
 
