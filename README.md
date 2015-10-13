@@ -6,6 +6,7 @@
 - [ ] Convert delay_counter integer into LCD ASCII codes
 - [ ] Send to latch_output as a display string
 - [ ] Create LCD Driver for interpretting delay_counter
+- [ ] Fix compilation error 10477
 
 latch_output will be the display string
    
