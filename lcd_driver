@@ -1,0 +1,55 @@
+-- This LCD driver is used to interpret a variable, such as delay_counter, and dissolve the integer bit-by-bit for character display
+
+-- The LCD Codes from before are used:
+--===============================-- 
+--  HD44780 CHAR DATA HEX VALUES --
+--===============================-- 
+--   = x"20",
+-- 0 = x"30",
+-- 1 = x"31",
+-- 2 = x"32",
+-- 3 = x"33",
+-- 4 = x"34",
+-- 5 = x"35",
+-- 6 = x"36",
+-- 7 = x"37",
+-- 8 = x"38",
+-- 9 = x"39",
+-- : = x"3A",
+-- ; = x"3B",
+-- < = x"3C",
+-- = = x"3D",
+-- > = x"3E",
+-- ? = x"3F",
+
+-- p = x"70",
+-- s = x"73",
+
+-- -> = x"7E",
+-- <- = x"7F",
+
+-- Need to create a string value which is passed from a function as a variable into lcd_display_string_01
+-- something like, lcd_display_string_01 <= display_final_value_as_string
+
+
+-- If we detect a rising edge across the output, then we have reached a new delay cell
+if (rising_edge(output_delay_counter)) then
+   delay_counter <= delay_counter+'1';
+   delay_counter_previous <= delay_counter-'1';
+end if
+ 
+-- If we have detected a rising edge at least once, and more than 1 second has passed, then we can assume we have reached our final delay cell by now
+-- Another option may be, if we don't detect a change in delay_counter for more than a second, then we can assume we have reached our final delay cell 
+if (delay_counter = delay_counter_previous)
+   display_final_value_as_string <= delay_counter;
+end if
+
+lcd_display_string_01 <= 
+  (
+-- Line 1          
+          x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",
+   
+-- Line 2   ->                                          
+          x"7E",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20"  
+   ); 
+
