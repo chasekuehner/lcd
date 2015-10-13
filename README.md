@@ -1,9 +1,11 @@
 ## LCD 
 
 ##### NEED TO DO:
+
 - [ ] Decode the rising-edge counts within delay_counter 
 - [ ] Convert delay_counter integer into LCD ASCII codes
 - [ ] Send to latch_output as a display string
+- [ ] Create LCD Driver for interpretting delay_counter
 
 latch_output will be the display string
    
