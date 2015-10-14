@@ -13,32 +13,20 @@
 LIBRARY IEEE;
 USE  IEEE.STD_LOGIC_1164.all;
 USE  IEEE.STD_LOGIC_ARITH.all;
-USE  IEEE.STD_LOGIC_UNSIGNED.all;
+--USE  IEEE.STD_LOGIC_UNSIGNED.all;
+--USE  IEEE.numeric_std.all;
 Library work;
 
 
 ENTITY test13 IS
    GENERIC( 
       num_hex_digits 				: integer := 2;
-      delay_counter  				: integer := 0;
-		final_stage_detector 		: integer := 0;
-		final_value 					: integer := 0;
-		ready_for_decoding 			: integer := 0;
-		ready_for_stage_2 			: integer := 0;
-		ready_for_stage_3 			: integer := 0;
-		final_value_converted_1 	: integer := 0;
-		final_value_converted_2 	: integer := 0;
-		final_value_converted_3 	: integer := 0;
-		output_delay_counter 		: integer := 0;
-		getting_display_ready		: integer := 0;
-		LCD_digit_1						: integer := 0;
-		LCD_digit_2						: integer := 0;
-		LCD_digit_3						: integer := 0;
-		final_value_math 				: integer := 0
-   );
+      N									: integer := 200
+		);
    
    PORT( 
-      reset              : IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
+      
+		reset              : IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
       clock_50           : IN     std_logic;  -- Using the DE2 50Mhz Clk, in order to Genreate the 400Hz signal... clk_count_400hz reset count value must be set to:  <= x"0F424"
       
 		
@@ -101,6 +89,7 @@ ARCHITECTURE LCD_DISPLAY_arch OF test13 IS
 
 COMPONENT sub3
 	PORT(
+	
 	    delayEN : IN STD_LOGIC;
 		 delayIN : IN STD_LOGIC;
 		 ENOout : OUT STD_LOGIC;
@@ -137,9 +126,8 @@ END COMPONENT;
 SIGNAL	SYNTHESIZED_WIRE_0 :  STD_LOGIC;
 SIGNAL	SYNTHESIZED_WIRE_3 :  STD_LOGIC;
 
-
   type character_string is array ( 0 to 31 ) of STD_LOGIC_VECTOR( 7 downto 0 );
-  
+
   type state_type is (hold, func_set, display_on, mode_set, print_string,
                       line2, return_home, drop_lcd_e, reset1, reset2,
                        reset3, display_off, display_clear);
@@ -148,7 +136,6 @@ SIGNAL	SYNTHESIZED_WIRE_3 :  STD_LOGIC;
   
   
   signal lcd_display_string          : character_string;
-  
   signal lcd_display_string_01       : character_string;
   signal lcd_display_string_02       : character_string;
   signal lcd_display_string_03       : character_string;
@@ -169,6 +156,22 @@ SIGNAL	SYNTHESIZED_WIRE_3 :  STD_LOGIC;
   signal Hex_Display_Data            : STD_LOGIC_VECTOR(7 DOWNTO 0); 
   signal data_bus                    : STD_LOGIC_VECTOR(7 downto 0);    
   signal LCD_CHAR_ARRAY              : STD_LOGIC_VECTOR(3 DOWNTO 0);
+  
+  signal delay_counter					 : integer := 0;
+  signal output_delay_counter			 : integer := 0;
+  signal final_stage_detector			 : integer range 0 to 1;
+  signal final_value						 : integer := 0;
+  signal ready_for_decoding 			 : integer := 0;
+  signal ready_for_stage_2 			 : integer range 0 to 1;
+  signal ready_for_stage_3 			 : integer range 0 to 1;
+  signal	final_value_converted_1 	 : integer := 0;
+  signal final_value_converted_2 	 : integer := 0;
+  signal final_value_converted_3 	 : integer := 0;
+  signal getting_display_ready	 	 : integer := 0;
+  signal LCD_Digit_1  		   	    : character_string;
+  signal LCD_Digit_2   				    : character_string;
+  signal LCD_Digit_3   	  			    : character_string;
+  signal final_value_math 				 : integer := 0; 
 
 BEGIN
   
@@ -247,21 +250,21 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
 ---------------------------------------------------------------------------------------------------------------
 PROCESS (LCD_CHAR_ARRAY)
 BEGIN
-  if (output_delay_counter'event) then
-   delay_counter <= delay_counter+'1';
+  if output_delay_counter'event then
+   delay_counter <= delay_counter + 1;
 else   
-   final_stage_detector <= final_stage_detector+'1';
+   final_stage_detector <= final_stage_detector + 1;
 end if;
  
 -- If final stage detector has been tripped more than an arbitrary large number, then we can assume we have reached our final delay cell.
-if (final_stage_detector > 200000) then
+if final_stage_detector > 200000 then
    final_value <= delay_counter;
    ready_for_decoding <= 1;
 end if;
 
 
 -- If ready for decoding has been tripped, then we can convert the delay_counter value into bits for the LCD lookup conversion
-if (ready_for_decoding = 1) then
+if ready_for_decoding = 1 then
 
 -- STAGE 1: Decode the integers into variables   
          final_value_math <= final_value;
@@ -272,72 +275,72 @@ if (ready_for_decoding = 1) then
 -- STAGE 2: Convert the variables into LCD codes
 -- If first digit is 0, we can replace it with x"20" for blank space, otherwise, use 0 with x"30"
   
-   if (getting_display_ready /= 3 and ready_for_stage_2 = 1) then
-         if (final_value_converted_1 = 0) then
+   if getting_display_ready /= 3 and ready_for_stage_2 = 1 then
+         if final_value_converted_1 = 0 then
          LCD_digit_1 <= x"20";
-         elsif (final_value_converted_1 = 1) then
+         elsif final_value_converted_1 = 1 then
          LCD_digit_1 <= x"31";
-         elsif (final_value_converted_1 = 2) then
+         elsif final_value_converted_1 = 2 then
          LCD_digit_1 <= x"32";
-         elsif (final_value_converted_1 = 3) then
+         elsif final_value_converted_1 = 3 then
          LCD_digit_1 <= x"33";
-         elsif (final_value_converted_1 = 4) then
+         elsif final_value_converted_1 = 4 then
          LCD_digit_1 <= x"34";
-         elsif (final_value_converted_1 = 5) then
+         elsif final_value_converted_1 = 5 then
          LCD_digit_1 <= x"35";
-         elsif (final_value_converted_1 = 6) then
+         elsif final_value_converted_1 = 6 then
          LCD_digit_1 <= x"36";
-         elsif (final_value_converted_1 = 7) then
+         elsif final_value_converted_1 = 7 then
          LCD_digit_1 <= x"37";
-         elsif (final_value_converted_1 = 8) then
+         elsif final_value_converted_1 = 8 then
          LCD_digit_1 <= x"38";
-         elsif (final_value_converted_1 = 9) then
+         elsif final_value_converted_1 = 9 then
          LCD_digit_1 <= x"39";
          end if;
          getting_display_ready <= getting_display_ready+1;
          
-         if (final_value_converted_2 = 0) then
+         if final_value_converted_2 = 0 then
          LCD_digit_2 <= x"30";
-         elsif (final_value_converted_2 = 1) then
+         elsif final_value_converted_2 = 1 then
          LCD_digit_2 <= x"31";
-         elsif (final_value_converted_2 = 2) then
+         elsif final_value_converted_2 = 2 then
          LCD_digit_2 <= x"32";
-         elsif (final_value_converted_2 = 3) then
+         elsif final_value_converted_2 = 3 then
          LCD_digit_2 <= x"33";
-         elsif (final_value_converted_2 = 4) then
+         elsif final_value_converted_2 = 4 then
          LCD_digit_2 <= x"34";
-         elsif (final_value_converted_2 = 5) then
+         elsif final_value_converted_2 = 5 then
          LCD_digit_2 <= x"35";
-         elsif (final_value_converted_2 = 6) then
+         elsif final_value_converted_2 = 6 then
          LCD_digit_2 <= x"36";
-         elsif (final_value_converted_2 = 7) then
+         elsif final_value_converted_2 = 7 then
          LCD_digit_2 <= x"37";
-         elsif (final_value_converted_2 = 8) then
+         elsif final_value_converted_2 = 8 then
          LCD_digit_2 <= x"38";
-         elsif (final_value_converted_2 = 9) then
+         elsif final_value_converted_2 = 9 then
          LCD_digit_2 <= x"39";
          end if;   
          getting_display_ready <= getting_display_ready+1;
          
-         if (final_value_converted_3 = 0) then
+         if final_value_converted_3 = 0 then
          LCD_digit_3 <= x"30";
-         elsif (final_value_converted_3 = 1) then
+         elsif final_value_converted_3 = 1 then
          LCD_digit_3 <= x"31";
-         elsif (final_value_converted_3 = 2) then
+         elsif final_value_converted_3 = 2 then
          LCD_digit_3 <= x"32";
-         elsif (final_value_converted_3 = 3) then
+         elsif final_value_converted_3 = 3 then
          LCD_digit_3 <= x"33";
-         elsif (final_value_converted_3 = 4) then
+         elsif final_value_converted_3 = 4 then
          LCD_digit_3 <= x"34";
-         elsif (final_value_converted_3 = 5) then
+         elsif final_value_converted_3 = 5 then
          LCD_digit_3 <= x"35";
-         elsif (final_value_converted_3 = 6) then
+         elsif final_value_converted_3 = 6 then
          LCD_digit_3 <= x"36";
-         elsif (final_value_converted_3 = 7) then
+         elsif final_value_converted_3 = 7 then
          LCD_digit_3 <= x"37";
-         elsif (final_value_converted_3 = 8) then
+         elsif final_value_converted_3 = 8 then
          LCD_digit_3 <= x"38";
-         elsif (final_value_converted_3 = 9) then
+         elsif final_value_converted_3 = 9 then
          LCD_digit_3 <= x"39";
          end if; 
          ready_for_stage_3 <= 1;
@@ -345,7 +348,7 @@ if (ready_for_decoding = 1) then
    end if; 
    
 -- STAGE 3: Prepare array for LCD Display String
-if (ready_for_stage_3 = 1) then
+if ready_for_stage_3 = 1 then
    time_measurement_display <= 
   (
 -- Line 1               Digit 1  ,  Digit 2  ,  Digit 3           
@@ -360,7 +363,7 @@ end if;
 end if;    
    
 -- If display_ready has been tripped, then we can push the converted integers onto the Display
-if (display_ready = 1) then
+if display_ready = 1 then
    lcd_display_string_01 <= time_measurement_display;
 end if;
 -- get next character in display string based on the LCD_CHAR_ARRAY (switches or Multiplexer)
