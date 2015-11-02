@@ -1,8 +1,8 @@
 ## LCD 
 
 ### Final Revisions
-Featured code during the demo.
-lcdoct_trial1.vhd was used a lot to test code functionality in modules.
+Final Revisions was the featured code during the demo.
+lcdoct_trial1.vhd was used a lot to test code functionality in stages.
 
 The last revisions of code were attempted on Final Revisions.
 
