@@ -743,5 +743,4 @@ end process;
   
 END ARCHITECTURE LCD_DISPLAY_arch;
 
-
     
