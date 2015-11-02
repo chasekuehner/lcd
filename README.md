@@ -14,7 +14,7 @@ View the commit history to get a detailed look and explanation on the purpose of
 - [x] Convert delay_counter integer into LCD ASCII codes
 - [x] Send to latch_output as a display string
 - [x] Create LCD Driver for interpretting delay_counter
-- [x] Fix compilation error 10477
+- [ ] Fix compilation error 10477 - Described in Issues#2
    
 ###### Ideas
 
