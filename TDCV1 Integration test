@@ -10,62 +10,123 @@
 --
 -- using Mentor Graphics HDL Designer(TM) 2010.3 (Build 21)
 --
-
--- I'm changing stuff for commit-sake
 LIBRARY IEEE;
 USE  IEEE.STD_LOGIC_1164.all;
 USE  IEEE.STD_LOGIC_ARITH.all;
 USE  IEEE.STD_LOGIC_UNSIGNED.all;
 
+LIBRARY work;
 
-ENTITY lcdoct IS
+ENTITY TDCV1 IS
    GENERIC( 
       num_hex_digits : integer := 2;
       delay_counter  : INTEGER := 0
    );
    
    PORT( 
-      reset              	: IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
-      clock_50           	: IN     std_logic;  -- Using the DE2 50Mhz Clk, in order to Genreate the 400Hz signal... clk_count_400hz reset count value must be set to:  <= x"0F424"
+      reset              : IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
+      clock_50           : IN     std_logic;  -- Using the DE2 50Mhz Clk, in order to Genreate the 400Hz signal... clk_count_400hz reset count value must be set to:  <= x"0F424"
       
-      latch_output       	: OUT    std_logic;  -- Track the amount of latches propogated
-      lcd_rs             	: OUT    std_logic;
-      lcd_e              	: OUT    std_logic;
-      lcd_rw             	: OUT    std_logic;
-      lcd_on             	: OUT    std_logic;
+      latch_output       : OUT    std_logic;  -- Track the amount of latches propogated
+      lcd_rs             : OUT    std_logic;
+      lcd_e              : OUT    std_logic;
+      lcd_rw             : OUT    std_logic;
+      lcd_on             : OUT    std_logic;
       
-      data_bus_0         	: INOUT  std_logic;
-      data_bus_1         	: INOUT  std_logic;
-      data_bus_2         	: INOUT  std_logic;
-      data_bus_3         	: INOUT  std_logic;
-      data_bus_4         	: INOUT  std_logic;
-      data_bus_5         	: INOUT  std_logic;
-      data_bus_6        	: INOUT  std_logic;
-      data_bus_7         	: INOUT  std_logic;
+      data_bus_0         : INOUT  STD_LOGIC;
+      data_bus_1         : INOUT  STD_LOGIC;
+      data_bus_2         : INOUT  STD_LOGIC;
+      data_bus_3         : INOUT  STD_LOGIC;
+      data_bus_4         : INOUT  STD_LOGIC;
+      data_bus_5         : INOUT  STD_LOGIC;
+      data_bus_6         : INOUT  STD_LOGIC;
+      data_bus_7         : INOUT  STD_LOGIC;
       
-      LCD_CHAR_ARRAY_0    	: IN     std_logic;
-      LCD_CHAR_ARRAY_1    	: IN     std_logic;
-      LCD_CHAR_ARRAY_2    	: IN     std_logic;
-      LCD_CHAR_ARRAY_3    	: IN     std_logic;
+      LCD_CHAR_ARRAY_0    : IN    STD_LOGIC;
+      LCD_CHAR_ARRAY_1    : IN    STD_LOGIC;
+      LCD_CHAR_ARRAY_2    : IN    STD_LOGIC;
+      LCD_CHAR_ARRAY_3    : IN    STD_LOGIC;
       
-      in_Hex_Display_Data_0 : IN     std_logic;
-      in_Hex_Display_Data_1 : IN     std_logic;
-      in_Hex_Display_Data_2 : IN     std_logic;
-      in_Hex_Display_Data_3 : IN     std_logic;
-      in_Hex_Display_Data_4 : IN     std_logic;
-      in_Hex_Display_Data_5 : IN     std_logic;
-      in_Hex_Display_Data_6 : IN     std_logic;
-      in_Hex_Display_Data_7 : IN     std_logic
+      Hex_Display_Data_0 : IN     STD_LOGIC;
+      Hex_Display_Data_1 : IN     STD_LOGIC;
+      Hex_Display_Data_2 : IN     STD_LOGIC;
+      Hex_Display_Data_3 : IN     STD_LOGIC;
+      Hex_Display_Data_4 : IN     STD_LOGIC;
+      Hex_Display_Data_5 : IN     STD_LOGIC;
+      Hex_Display_Data_6 : IN     STD_LOGIC;
+      Hex_Display_Data_7 : IN     STD_LOGIC;
       
-      
-   );
+		maininput : IN  STD_LOGIC;
+		LED1 		 : OUT STD_LOGIC;
+		LED2 		 : OUT STD_LOGIC;
+		LED3 		 : OUT STD_LOGIC;
+		LED4 		 : OUT STD_LOGIC;
+		LED5 		 : OUT STD_LOGIC;
+		LED6 		 : OUT STD_LOGIC;
+		LED7 		 : OUT STD_LOGIC;
+		LED8 		 : OUT STD_LOGIC;
+		LED9 		 : OUT STD_LOGIC;
+		LED10		 : OUT STD_LOGIC;
+		LED11		 : OUT STD_LOGIC;
+		LED12		 : OUT STD_LOGIC;
+		LED13		 : OUT STD_LOGIC;
+		LED14		 : OUT STD_LOGIC;
+		LED15		 : OUT STD_LOGIC;
+		LED16		 : OUT STD_LOGIC;
+		LED17		 : OUT STD_LOGIC;
+		LED18		 : OUT STD_LOGIC;
+		LED19		 : OUT STD_LOGIC;
+		LED20		 : OUT STD_LOGIC;
+		LED21		 : OUT STD_LOGIC   
+   
+	);
 
 -- Declarations
 
-END lcdoct ;
+END TDCV1;
 
 --
-ARCHITECTURE LCD_DISPLAY_arch OF lcdoct IS
+ARCHITECTURE LCD_DISPLAY_arch OF TDCV1 IS
+
+COMPONENT sub3
+	PORT(
+	    delayEN : IN STD_LOGIC;
+		 delayIN : IN STD_LOGIC;
+		 ENOout : OUT STD_LOGIC;
+		 INOout : OUT STD_LOGIC;
+		 n16 : OUT STD_LOGIC;
+		 n17 : OUT STD_LOGIC;
+		 n18 : OUT STD_LOGIC;
+		 n19 : OUT STD_LOGIC;
+		 n13 : OUT STD_LOGIC;
+		 n14 : OUT STD_LOGIC;
+		 n15 : OUT STD_LOGIC;
+		 n20 : OUT STD_LOGIC;
+		 n21 : OUT STD_LOGIC;
+		 n22 : OUT STD_LOGIC;
+		 n6 : OUT STD_LOGIC;
+		 n7 : OUT STD_LOGIC;
+		 n8 : OUT STD_LOGIC;
+		 n9 : OUT STD_LOGIC;
+		 n3 : OUT STD_LOGIC;
+		 n4 : OUT STD_LOGIC;
+		 n5 : OUT STD_LOGIC;
+		 n10 : OUT STD_LOGIC;
+		 n11 : OUT STD_LOGIC;
+		 n12 : OUT STD_LOGIC
+	);
+END COMPONENT;
+
+COMPONENT delayelement
+	PORT(delayinput : IN STD_LOGIC;
+		 delayoutput : OUT STD_LOGIC
+	);
+END COMPONENT;
+
+SIGNAL	SYNTHESIZED_WIRE_0 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_3 :  STD_LOGIC;
+
+
   type character_string is array ( 0 to 31 ) of STD_LOGIC_VECTOR( 7 downto 0 );
   
   type state_type is (hold, func_set, display_on, mode_set, print_string,
@@ -94,25 +155,61 @@ ARCHITECTURE LCD_DISPLAY_arch OF lcdoct IS
   signal char_count                  : STD_LOGIC_VECTOR(4 downto 0);
   signal clk_400hz_enable,lcd_rw_int : std_logic;
   
-  signal sig_Hex_Display_Data        : STD_LOGIC_VECTOR(7 DOWNTO 0); 
+  signal Hex_Display_Data            : STD_LOGIC_VECTOR(7 DOWNTO 0); 
   signal data_bus                    : STD_LOGIC_VECTOR(7 downto 0);    
   signal LCD_CHAR_ARRAY              : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
 BEGIN
   
+LED19 <= maininput;
+LED20 <= SYNTHESIZED_WIRE_3;
+LED21 <= SYNTHESIZED_WIRE_0;
+
+
+SYNTHESIZED_WIRE_3 <= NOT(maininput);
+
+
+b2v_inst18 : sub3
+PORT MAP(
+		 delayEN => SYNTHESIZED_WIRE_0,
+		 delayIN => SYNTHESIZED_WIRE_3,
+		 n16 => LED18,
+		 n17 => LED17,
+		 n18 => LED16,
+		 n19 => LED15,
+		 n13 => LED14,
+		 n15 => LED13,
+		 n21 => LED12,
+		 n22 => LED11,
+		 n6 => LED10,
+		 n7 => LED9,
+		 n8 => LED8,
+		 n9 => LED7,
+		 n3 => LED6,
+		 n4 => LED5,
+		 n5 => LED4,
+		 n10 => LED3,
+		 n11 => LED2,
+		 n12 => LED1
+		 );
+
+
+b2v_inst2 : delayelement
+PORT MAP(delayinput => SYNTHESIZED_WIRE_3,
+		 delayoutput => SYNTHESIZED_WIRE_0);
 
 
 --===================================================--  
 -- SIGNAL STD_LOGIC_VECTORS assigned to OUTPUT PORTS 
 --===================================================--    
-sig_Hex_Display_Data(0) <= in_Hex_Display_Data_0;
-sig_Hex_Display_Data(1) <= in_Hex_Display_Data_0;   
-sig_Hex_Display_Data(2) <= in_Hex_Display_Data_0;
-sig_Hex_Display_Data(3) <= in_Hex_Display_Data_0;  
-sig_Hex_Display_Data(4) <= in_Hex_Display_Data_0;
-sig_Hex_Display_Data(5) <= in_Hex_Display_Data_0;  
-sig_Hex_Display_Data(6) <= in_Hex_Display_Data_0;
-sig_Hex_Display_Data(7) <= in_Hex_Display_Data_0;  
+Hex_Display_Data(0) <= Hex_Display_Data_0;
+Hex_Display_Data(1) <= Hex_Display_Data_1;   
+Hex_Display_Data(2) <= Hex_Display_Data_2;
+Hex_Display_Data(3) <= Hex_Display_Data_3;  
+Hex_Display_Data(4) <= Hex_Display_Data_4;
+Hex_Display_Data(5) <= Hex_Display_Data_5;  
+Hex_Display_Data(6) <= Hex_Display_Data_6;
+Hex_Display_Data(7) <= Hex_Display_Data_7;  
 
 data_bus_0 <= data_bus(0);
 data_bus_1 <= data_bus(1);
@@ -259,11 +356,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
    );
    
    
-   
-   
-   
-   
-   
 --========================================================================================================================================================================================== 
    lcd_display_string_02 <= 
   (
@@ -275,9 +367,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
    ); 
    
 
-
-
-
 --==========================================================================================================================================================================================    
    lcd_display_string_03 <= 
     (
@@ -288,10 +377,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
           x"7E",x"25",x"32",x"35",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20" 
    );
    
-   
-
-
-
 
 --==========================================================================================================================================================================================   
    lcd_display_string_04 <= 
@@ -303,15 +388,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
           x"7E",x"25",x"35",x"30",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20" 
    );
    
-   
-   
-   
-   
-
-
-
-
-
 
 --==========================================================================================================================================================================================   
    lcd_display_string_05 <= 
@@ -324,13 +400,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
    );
    
    
-    
-   
-
-
-
-
-
 
 --==========================================================================================================================================================================================    
    lcd_display_string_06 <= 
@@ -342,14 +411,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
           x"7E",x"25",x"31",x"30",x"30",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20" 
    );
    
-   
-   
-   
-
-
-
-
-
 
 --==========================================================================================================================================================================================    
    lcd_display_string_07 <= 
@@ -360,13 +421,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
 -- Line 2   ->     %    2     5 
           x"7E",x"25",x"32",x"35",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20" 
    );
-   
-   
-   
-
-
-
-
 
 --==========================================================================================================================================================================================    
    lcd_display_string_08 <= 
@@ -377,11 +431,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
 -- Line 2   ->     %    5     0 
           x"7E",x"25",x"35",x"30",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20" 
    );
-   
-   
-   
-
-
 
 --==========================================================================================================================================================================================    
    lcd_display_string_09 <= 
@@ -392,12 +441,7 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
 -- Line 2   ->     %    7     5 
           x"7E",x"25",x"37",x"35",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20" 
    );
-   
-   
-   
-   
-   
-   
+ 
 --==========================================================================================================================================================================================    
    lcd_display_string_10 <= 
     (
@@ -407,12 +451,7 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
 -- Line 2   ->     %    1     0      0
           x"7E",x"25",x"31",x"30",x"30",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20",x"20" 
    );
-   
-   
-   
-
-
-   
+ 
 --==========================================================================================================================================================================================    
    lcd_display_string_11 <= 
     (
@@ -422,9 +461,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
 -- Line 2                C     O     N    T      R     O     L    L     E      R
           x"20",x"20",x"43",x"4F",x"4E",x"54",x"52",x"4F",x"4C",x"4C",x"45",x"52",x"20",x"20",x"0"&hex_display_data(7 downto 4),x"0"&hex_display_data(3 downto 0)
    );
-   
-
-
 
 -------------------------------------------------------------------------------------------------------
 -- BIDIRECTIONAL TRI STATE LCD DATA BUS
@@ -432,10 +468,6 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
    
 -- LCD_RW PORT is assigned to it matching SIGNAL 
  lcd_rw <= lcd_rw_int;
- 
- 
- 
- 
  
  
 
@@ -496,10 +528,6 @@ BEGIN
 END PROCESS;
    
 
- 
-  
-  
-  
 --======================= CLOCK SIGNALS ============================--  
 process(clock_50)
 begin
@@ -745,4 +773,5 @@ end process;
   
 END ARCHITECTURE LCD_DISPLAY_arch;
 
-    
+
+          

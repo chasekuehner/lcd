@@ -1,71 +1,150 @@
--- VHDL CODE by Gerry O'Brien - HD44780 LCD Controller STATE_MACHINE
---==================================================--
---
+-- Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+-- Your use of Altera Corporation's design tools, logic functions 
+-- and other software and tools, and its AMPP partner logic 
+-- functions, and any output files from any of the foregoing 
+-- (including device programming or simulation files), and any 
+-- associated documentation or information are expressly subject 
+-- to the terms and conditions of the Altera Program License 
+-- Subscription Agreement, the Altera Quartus II License Agreement,
+-- the Altera MegaCore Function License Agreement, or other 
+-- applicable license agreement, including, without limitation, 
+-- that your use is for the sole purpose of programming logic 
+-- devices manufactured by Altera and sold by Altera or its 
+-- authorized distributors.  Please refer to the applicable 
+-- agreement for further details.
+
+-- PROGRAM		"Quartus II 64-Bit"
+-- VERSION		"Version 15.0.1 Build 150 06/03/2015 SJ Web Edition"
+-- CREATED		"Wed Oct 14 08:11:50 2015"
+
 -- VHDL Architecture DE2_LCD_lib.LCD_DISPLAY_nty.LCD_DISPLAY_arch
 --
 -- Created:
 --          by - Gerry O'Brien 
 --          WWW.DIGITAL-CIRCUITRY.COM
 --          at - 15:30:18 26/03/2015
---
--- using Mentor Graphics HDL Designer(TM) 2010.3 (Build 21)
---
 
--- I'm changing stuff for commit-sake
+
 LIBRARY IEEE;
 USE  IEEE.STD_LOGIC_1164.all;
 USE  IEEE.STD_LOGIC_ARITH.all;
 USE  IEEE.STD_LOGIC_UNSIGNED.all;
 
+LIBRARY work;
 
-ENTITY lcdoct IS
+ENTITY TDCV2 IS 
    GENERIC( 
-      num_hex_digits : integer := 2;
-      delay_counter  : INTEGER := 0
-   );
+      num_hex_digits 	 : integer := 2;
+      N						 : integer := 200
+		);
    
    PORT( 
-      reset              	: IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
-      clock_50           	: IN     std_logic;  -- Using the DE2 50Mhz Clk, in order to Genreate the 400Hz signal... clk_count_400hz reset count value must be set to:  <= x"0F424"
       
-      latch_output       	: OUT    std_logic;  -- Track the amount of latches propogated
-      lcd_rs             	: OUT    std_logic;
-      lcd_e              	: OUT    std_logic;
-      lcd_rw             	: OUT    std_logic;
-      lcd_on             	: OUT    std_logic;
+		reset              : IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
+      clock_50           : IN     std_logic;  -- Using the DE2 50Mhz Clk, in order to Genreate the 400Hz signal... clk_count_400hz reset count value must be set to:  <= x"0F424"
       
-      data_bus_0         	: INOUT  std_logic;
-      data_bus_1         	: INOUT  std_logic;
-      data_bus_2         	: INOUT  std_logic;
-      data_bus_3         	: INOUT  std_logic;
-      data_bus_4         	: INOUT  std_logic;
-      data_bus_5         	: INOUT  std_logic;
-      data_bus_6        	: INOUT  std_logic;
-      data_bus_7         	: INOUT  std_logic;
+		
+      lcd_rs             : OUT    std_logic;
+      lcd_e              : OUT    std_logic;
+      lcd_rw             : OUT    std_logic;
+      lcd_on             : OUT    std_logic;
       
-      LCD_CHAR_ARRAY_0    	: IN     std_logic;
-      LCD_CHAR_ARRAY_1    	: IN     std_logic;
-      LCD_CHAR_ARRAY_2    	: IN     std_logic;
-      LCD_CHAR_ARRAY_3    	: IN     std_logic;
+      data_bus_0         : INOUT  STD_LOGIC;
+      data_bus_1         : INOUT  STD_LOGIC;
+      data_bus_2         : INOUT  STD_LOGIC;
+      data_bus_3         : INOUT  STD_LOGIC;
+      data_bus_4         : INOUT  STD_LOGIC;
+      data_bus_5         : INOUT  STD_LOGIC;
+      data_bus_6         : INOUT  STD_LOGIC;
+      data_bus_7         : INOUT  STD_LOGIC;
       
-      in_Hex_Display_Data_0 : IN     std_logic;
-      in_Hex_Display_Data_1 : IN     std_logic;
-      in_Hex_Display_Data_2 : IN     std_logic;
-      in_Hex_Display_Data_3 : IN     std_logic;
-      in_Hex_Display_Data_4 : IN     std_logic;
-      in_Hex_Display_Data_5 : IN     std_logic;
-      in_Hex_Display_Data_6 : IN     std_logic;
-      in_Hex_Display_Data_7 : IN     std_logic
+      LCD_CHAR_ARRAY_0   : IN     STD_LOGIC;
+      LCD_CHAR_ARRAY_1   : IN     STD_LOGIC;
+      LCD_CHAR_ARRAY_2   : IN     STD_LOGIC;
+      LCD_CHAR_ARRAY_3   : IN     STD_LOGIC;
       
+      Hex_Display_Data_0 : IN     STD_LOGIC;
+      Hex_Display_Data_1 : IN     STD_LOGIC;
+      Hex_Display_Data_2 : IN     STD_LOGIC;
+      Hex_Display_Data_3 : IN     STD_LOGIC;
+      Hex_Display_Data_4 : IN     STD_LOGIC;
+      Hex_Display_Data_5 : IN     STD_LOGIC;
+      Hex_Display_Data_6 : IN     STD_LOGIC;
+      Hex_Display_Data_7 : IN     STD_LOGIC;
       
-   );
-
--- Declarations
-
-END lcdoct ;
+		INmaininput :  IN  STD_LOGIC;
+		n3 	:  OUT  STD_LOGIC;
+		n4 	:  OUT  STD_LOGIC;
+		n5 	:  OUT  STD_LOGIC;
+		n6 	:  OUT  STD_LOGIC;
+		n7 	:  OUT  STD_LOGIC;
+		n1 	:  OUT  STD_LOGIC;
+		n0 	:  OUT  STD_LOGIC;
+		n2 	:  OUT  STD_LOGIC;
+		n8 	:  OUT  STD_LOGIC;
+		n9 	:  OUT  STD_LOGIC;
+		n10 	:  OUT  STD_LOGIC;
+		n11 	:  OUT  STD_LOGIC;
+		n12 	:  OUT  STD_LOGIC;
+		n13 	:  OUT  STD_LOGIC;
+		n14 	:  OUT  STD_LOGIC;
+		n15 	:  OUT  STD_LOGIC;
+		n16 	:  OUT  STD_LOGIC;
+		n17 	:  OUT  STD_LOGIC;
+		n18 	:  OUT  STD_LOGIC;
+		n19 	:  OUT  STD_LOGIC;
+		n20 	:  OUT  STD_LOGIC;
+		n21 	:  OUT  STD_LOGIC;
+		n22 	:  OUT  STD_LOGIC;
+		n23 	:  OUT  STD_LOGIC;
+		n24 	:  OUT  STD_LOGIC;
+		n25 	:  OUT  STD_LOGIC;
+		n26 	:  OUT  STD_LOGIC;
+		n27 	:  OUT  STD_LOGIC;
+		n28 	:  OUT  STD_LOGIC;
+		n29 	:  OUT  STD_LOGIC;
+		n30 	:  OUT  STD_LOGIC;
+		n31 	:  OUT  STD_LOGIC;
+		n32 	:  OUT  STD_LOGIC;
+		n33 	:  OUT  STD_LOGIC;
+		n34 	:  OUT  STD_LOGIC;
+		n35 	:  OUT  STD_LOGIC;
+		n36 	:  OUT  STD_LOGIC;
+		n37 	:  OUT  STD_LOGIC;
+		n38 	:  OUT  STD_LOGIC;
+		n39 	:  OUT  STD_LOGIC;
+		n40 	:  OUT  STD_LOGIC;
+		n41 	:  OUT  STD_LOGIC;
+		n42 	:  OUT  STD_LOGIC;
+		n43 	:  OUT  STD_LOGIC;
+		n44 	:  OUT  STD_LOGIC;
+		n45 	:  OUT  STD_LOGIC;
+		n46 	:  OUT  STD_LOGIC;
+		n47 	:  OUT  STD_LOGIC;
+		n48 	:  OUT  STD_LOGIC;
+		n49 	:  OUT  STD_LOGIC;
+		n50 	:  OUT  STD_LOGIC;
+		n51 	:  OUT  STD_LOGIC;
+		n52 	:  OUT  STD_LOGIC;
+		n53 	:  OUT  STD_LOGIC;
+		n54 	:  OUT  STD_LOGIC;
+		n55 	:  OUT  STD_LOGIC;
+		n56 	:  OUT  STD_LOGIC;
+		n57 	:  OUT  STD_LOGIC;
+		n58 	:  OUT  STD_LOGIC;
+		n59 	:  OUT  STD_LOGIC;
+		n60 	:  OUT  STD_LOGIC;
+		n61 	:  OUT  STD_LOGIC;
+		n62 	:  OUT  STD_LOGIC;
+		n63 	:  OUT  STD_LOGIC;
+		n64	:  OUT  STD_LOGIC;
+		n65 	:  OUT  STD_LOGIC;
+		ENout :  OUT  STD_LOGIC
+	);
+END TDCV2;
 
 --
-ARCHITECTURE LCD_DISPLAY_arch OF lcdoct IS
+ARCHITECTURE LCD_DISPLAY_arch OF TDCV2 IS
   type character_string is array ( 0 to 31 ) of STD_LOGIC_VECTOR( 7 downto 0 );
   
   type state_type is (hold, func_set, display_on, mode_set, print_string,
@@ -94,7 +173,7 @@ ARCHITECTURE LCD_DISPLAY_arch OF lcdoct IS
   signal char_count                  : STD_LOGIC_VECTOR(4 downto 0);
   signal clk_400hz_enable,lcd_rw_int : std_logic;
   
-  signal sig_Hex_Display_Data        : STD_LOGIC_VECTOR(7 DOWNTO 0); 
+  signal Hex_Display_Data            : STD_LOGIC_VECTOR(7 DOWNTO 0); 
   signal data_bus                    : STD_LOGIC_VECTOR(7 downto 0);    
   signal LCD_CHAR_ARRAY              : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
@@ -105,14 +184,14 @@ BEGIN
 --===================================================--  
 -- SIGNAL STD_LOGIC_VECTORS assigned to OUTPUT PORTS 
 --===================================================--    
-sig_Hex_Display_Data(0) <= in_Hex_Display_Data_0;
-sig_Hex_Display_Data(1) <= in_Hex_Display_Data_0;   
-sig_Hex_Display_Data(2) <= in_Hex_Display_Data_0;
-sig_Hex_Display_Data(3) <= in_Hex_Display_Data_0;  
-sig_Hex_Display_Data(4) <= in_Hex_Display_Data_0;
-sig_Hex_Display_Data(5) <= in_Hex_Display_Data_0;  
-sig_Hex_Display_Data(6) <= in_Hex_Display_Data_0;
-sig_Hex_Display_Data(7) <= in_Hex_Display_Data_0;  
+Hex_Display_Data(0) <= Hex_Display_Data_0;
+Hex_Display_Data(1) <= Hex_Display_Data_1;   
+Hex_Display_Data(2) <= Hex_Display_Data_2;
+Hex_Display_Data(3) <= Hex_Display_Data_3;  
+Hex_Display_Data(4) <= Hex_Display_Data_4;
+Hex_Display_Data(5) <= Hex_Display_Data_5;  
+Hex_Display_Data(6) <= Hex_Display_Data_6;
+Hex_Display_Data(7) <= Hex_Display_Data_7;  
 
 data_bus_0 <= data_bus(0);
 data_bus_1 <= data_bus(1);
@@ -742,7 +821,199 @@ begin
       end if;-- CLOSING STATEMENT FOR "IF reset = '0' THEN" 
       
 end process;                                                            
-  
+   
 END ARCHITECTURE LCD_DISPLAY_arch;
 
-    
+ARCHITECTURE bdf_type OF TDCV2 IS 
+
+COMPONENT propogationbyte
+	PORT(ENbyte : IN STD_LOGIC;
+		 INbyte : IN STD_LOGIC;
+		 ENbyteout : OUT STD_LOGIC;
+		 INbyteout : OUT STD_LOGIC;
+		 n3 : OUT STD_LOGIC;
+		 n4 : OUT STD_LOGIC;
+		 n5 : OUT STD_LOGIC;
+		 n6 : OUT STD_LOGIC;
+		 n7 : OUT STD_LOGIC;
+		 n1 : OUT STD_LOGIC;
+		 n0 : OUT STD_LOGIC;
+		 n2 : OUT STD_LOGIC
+	);
+END COMPONENT;
+
+COMPONENT delay8
+	PORT(delay8IN : IN STD_LOGIC;
+		 delay8out : OUT STD_LOGIC
+	);
+END COMPONENT;
+
+SIGNAL	SYNTHESIZED_WIRE_0 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_1 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_2 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_3 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_4 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_5 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_6 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_7 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_8 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_9 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_10 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_11 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_12 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_13 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_14 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_15 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_16 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_17 :  STD_LOGIC;
+SIGNAL	SYNTHESIZED_WIRE_18 :  STD_LOGIC;
+
+
+BEGIN 
+n65 <= INmaininput;
+n64 <= SYNTHESIZED_WIRE_1;
+
+
+
+b2v_inst : propogationbyte
+PORT MAP(ENbyte => SYNTHESIZED_WIRE_0,
+		 INbyte => SYNTHESIZED_WIRE_1,
+		 ENbyteout => SYNTHESIZED_WIRE_2,
+		 INbyteout => SYNTHESIZED_WIRE_3,
+		 n3 => n3,
+		 n4 => n4,
+		 n5 => n5,
+		 n6 => n6,
+		 n7 => n7,
+		 n1 => n1,
+		 n0 => n0,
+		 n2 => n2);
+
+
+b2v_inst1 : propogationbyte
+PORT MAP(ENbyte => SYNTHESIZED_WIRE_2,
+		 INbyte => SYNTHESIZED_WIRE_3,
+		 ENbyteout => SYNTHESIZED_WIRE_7,
+		 INbyteout => SYNTHESIZED_WIRE_8,
+		 n3 => n11,
+		 n4 => n12,
+		 n5 => n13,
+		 n6 => n14,
+		 n7 => n15,
+		 n1 => n9,
+		 n0 => n8,
+		 n2 => n10);
+
+
+b2v_inst10 : delay8
+PORT MAP(delay8IN => SYNTHESIZED_WIRE_4,
+		 delay8out => SYNTHESIZED_WIRE_5);
+
+
+b2v_inst11 : delay8
+PORT MAP(delay8IN => SYNTHESIZED_WIRE_5,
+		 delay8out => SYNTHESIZED_WIRE_6);
+
+
+b2v_inst12 : delay8
+PORT MAP(delay8IN => SYNTHESIZED_WIRE_6,
+		 delay8out => SYNTHESIZED_WIRE_0);
+
+
+b2v_inst2 : propogationbyte
+PORT MAP(ENbyte => SYNTHESIZED_WIRE_7,
+		 INbyte => SYNTHESIZED_WIRE_8,
+		 ENbyteout => SYNTHESIZED_WIRE_9,
+		 INbyteout => SYNTHESIZED_WIRE_10,
+		 n3 => n19,
+		 n4 => n20,
+		 n5 => n21,
+		 n6 => n22,
+		 n7 => n23,
+		 n1 => n17,
+		 n0 => n16,
+		 n2 => n18);
+
+
+b2v_inst3 : propogationbyte
+PORT MAP(ENbyte => SYNTHESIZED_WIRE_9,
+		 INbyte => SYNTHESIZED_WIRE_10,
+		 ENbyteout => SYNTHESIZED_WIRE_11,
+		 INbyteout => SYNTHESIZED_WIRE_12,
+		 n3 => n27,
+		 n4 => n28,
+		 n5 => n29,
+		 n6 => n30,
+		 n7 => n31,
+		 n1 => n25,
+		 n0 => n24,
+		 n2 => n26);
+
+
+b2v_inst4 : propogationbyte
+PORT MAP(ENbyte => SYNTHESIZED_WIRE_11,
+		 INbyte => SYNTHESIZED_WIRE_12,
+		 ENbyteout => SYNTHESIZED_WIRE_13,
+		 INbyteout => SYNTHESIZED_WIRE_14,
+		 n3 => n35,
+		 n4 => n36,
+		 n5 => n37,
+		 n6 => n38,
+		 n7 => n39,
+		 n1 => n33,
+		 n0 => n32,
+		 n2 => n34);
+
+
+b2v_inst5 : propogationbyte
+PORT MAP(ENbyte => SYNTHESIZED_WIRE_13,
+		 INbyte => SYNTHESIZED_WIRE_14,
+		 ENbyteout => SYNTHESIZED_WIRE_15,
+		 INbyteout => SYNTHESIZED_WIRE_16,
+		 n3 => n43,
+		 n4 => n44,
+		 n5 => n45,
+		 n6 => n46,
+		 n7 => n47,
+		 n1 => n41,
+		 n0 => n40,
+		 n2 => n42);
+
+
+b2v_inst6 : propogationbyte
+PORT MAP(ENbyte => SYNTHESIZED_WIRE_15,
+		 INbyte => SYNTHESIZED_WIRE_16,
+		 ENbyteout => SYNTHESIZED_WIRE_17,
+		 INbyteout => SYNTHESIZED_WIRE_18,
+		 n3 => n51,
+		 n4 => n52,
+		 n5 => n53,
+		 n6 => n54,
+		 n7 => n55,
+		 n1 => n49,
+		 n0 => n48,
+		 n2 => n50);
+
+
+b2v_inst7 : propogationbyte
+PORT MAP(ENbyte => SYNTHESIZED_WIRE_17,
+		 INbyte => SYNTHESIZED_WIRE_18,
+		 ENbyteout => ENout,
+		 n3 => n59,
+		 n4 => n60,
+		 n5 => n61,
+		 n6 => n62,
+		 n7 => n63,
+		 n1 => n57,
+		 n0 => n56,
+		 n2 => n58);
+
+
+b2v_inst8 : delay8
+PORT MAP(delay8IN => INmaininput,
+		 delay8out => SYNTHESIZED_WIRE_4);
+
+
+SYNTHESIZED_WIRE_1 <= NOT(INmaininput);
+
+END ARCHITECTURE bdf_type;
