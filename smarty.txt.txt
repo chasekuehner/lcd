@@ -1,0 +1,3 @@
+I'm a smarty text!
+
+I'm a smarter text.
