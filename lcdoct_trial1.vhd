@@ -10,6 +10,8 @@
 --
 -- using Mentor Graphics HDL Designer(TM) 2010.3 (Build 21)
 --
+
+-- I'm changing stuff for commit-sake
 LIBRARY IEEE;
 USE  IEEE.STD_LOGIC_1164.all;
 USE  IEEE.STD_LOGIC_ARITH.all;
@@ -23,37 +25,37 @@ ENTITY lcdoct IS
    );
    
    PORT( 
-      reset              : IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
-      clock_50           : IN     std_logic;  -- Using the DE2 50Mhz Clk, in order to Genreate the 400Hz signal... clk_count_400hz reset count value must be set to:  <= x"0F424"
+      reset              	: IN     std_logic;  -- Map this Port to a Switch within your [Port Declarations / Pin Planer]  
+      clock_50           	: IN     std_logic;  -- Using the DE2 50Mhz Clk, in order to Genreate the 400Hz signal... clk_count_400hz reset count value must be set to:  <= x"0F424"
       
-      latch_output       : OUT    std_logic;  -- Track the amount of latches propogated
-      lcd_rs             : OUT    std_logic;
-      lcd_e              : OUT    std_logic;
-      lcd_rw             : OUT    std_logic;
-      lcd_on             : OUT    std_logic;
+      latch_output       	: OUT    std_logic;  -- Track the amount of latches propogated
+      lcd_rs             	: OUT    std_logic;
+      lcd_e              	: OUT    std_logic;
+      lcd_rw             	: OUT    std_logic;
+      lcd_on             	: OUT    std_logic;
       
-      data_bus_0         : INOUT  STD_LOGIC;
-      data_bus_1         : INOUT  STD_LOGIC;
-      data_bus_2         : INOUT  STD_LOGIC;
-      data_bus_3         : INOUT  STD_LOGIC;
-      data_bus_4         : INOUT  STD_LOGIC;
-      data_bus_5         : INOUT  STD_LOGIC;
-      data_bus_6         : INOUT  STD_LOGIC;
-      data_bus_7         : INOUT  STD_LOGIC;
+      data_bus_0         	: INOUT  std_logic;
+      data_bus_1         	: INOUT  std_logic;
+      data_bus_2         	: INOUT  std_logic;
+      data_bus_3         	: INOUT  std_logic;
+      data_bus_4         	: INOUT  std_logic;
+      data_bus_5         	: INOUT  std_logic;
+      data_bus_6        	: INOUT  std_logic;
+      data_bus_7         	: INOUT  std_logic;
       
-      LCD_CHAR_ARRAY_0    : IN    STD_LOGIC;
-      LCD_CHAR_ARRAY_1    : IN    STD_LOGIC;
-      LCD_CHAR_ARRAY_2    : IN    STD_LOGIC;
-      LCD_CHAR_ARRAY_3    : IN    STD_LOGIC;
+      LCD_CHAR_ARRAY_0    	: IN     std_logic;
+      LCD_CHAR_ARRAY_1    	: IN     std_logic;
+      LCD_CHAR_ARRAY_2    	: IN     std_logic;
+      LCD_CHAR_ARRAY_3    	: IN     std_logic;
       
-      Hex_Display_Data_0 : IN     STD_LOGIC;
-      Hex_Display_Data_1 : IN     STD_LOGIC;
-      Hex_Display_Data_2 : IN     STD_LOGIC;
-      Hex_Display_Data_3 : IN     STD_LOGIC;
-      Hex_Display_Data_4 : IN     STD_LOGIC;
-      Hex_Display_Data_5 : IN     STD_LOGIC;
-      Hex_Display_Data_6 : IN     STD_LOGIC;
-      Hex_Display_Data_7 : IN     STD_LOGIC
+      in_Hex_Display_Data_0 : IN     std_logic;
+      in_Hex_Display_Data_1 : IN     std_logic;
+      in_Hex_Display_Data_2 : IN     std_logic;
+      in_Hex_Display_Data_3 : IN     std_logic;
+      in_Hex_Display_Data_4 : IN     std_logic;
+      in_Hex_Display_Data_5 : IN     std_logic;
+      in_Hex_Display_Data_6 : IN     std_logic;
+      in_Hex_Display_Data_7 : IN     std_logic
       
       
    );
@@ -92,7 +94,7 @@ ARCHITECTURE LCD_DISPLAY_arch OF lcdoct IS
   signal char_count                  : STD_LOGIC_VECTOR(4 downto 0);
   signal clk_400hz_enable,lcd_rw_int : std_logic;
   
-  signal Hex_Display_Data            : STD_LOGIC_VECTOR(7 DOWNTO 0); 
+  signal sig_Hex_Display_Data        : STD_LOGIC_VECTOR(7 DOWNTO 0); 
   signal data_bus                    : STD_LOGIC_VECTOR(7 downto 0);    
   signal LCD_CHAR_ARRAY              : STD_LOGIC_VECTOR(3 DOWNTO 0);
 
@@ -103,14 +105,14 @@ BEGIN
 --===================================================--  
 -- SIGNAL STD_LOGIC_VECTORS assigned to OUTPUT PORTS 
 --===================================================--    
-Hex_Display_Data(0) <= Hex_Display_Data_0;
-Hex_Display_Data(1) <= Hex_Display_Data_1;   
-Hex_Display_Data(2) <= Hex_Display_Data_2;
-Hex_Display_Data(3) <= Hex_Display_Data_3;  
-Hex_Display_Data(4) <= Hex_Display_Data_4;
-Hex_Display_Data(5) <= Hex_Display_Data_5;  
-Hex_Display_Data(6) <= Hex_Display_Data_6;
-Hex_Display_Data(7) <= Hex_Display_Data_7;  
+sig_Hex_Display_Data(0) <= in_Hex_Display_Data_0;
+sig_Hex_Display_Data(1) <= in_Hex_Display_Data_0;   
+sig_Hex_Display_Data(2) <= in_Hex_Display_Data_0;
+sig_Hex_Display_Data(3) <= in_Hex_Display_Data_0;  
+sig_Hex_Display_Data(4) <= in_Hex_Display_Data_0;
+sig_Hex_Display_Data(5) <= in_Hex_Display_Data_0;  
+sig_Hex_Display_Data(6) <= in_Hex_Display_Data_0;
+sig_Hex_Display_Data(7) <= in_Hex_Display_Data_0;  
 
 data_bus_0 <= data_bus(0);
 data_bus_1 <= data_bus(1);
