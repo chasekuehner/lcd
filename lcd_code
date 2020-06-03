@@ -13,7 +13,7 @@ USE  IEEE.STD_LOGIC_ARITH.all;
 USE  IEEE.STD_LOGIC_UNSIGNED.all;
 
 
-ENTITY LCD_DISPLAY_nty IS
+ENTITY lcdoct IS
    GENERIC( 
       num_hex_digits : integer := 2;
       delay_counter  : INTEGER := 0
@@ -57,10 +57,10 @@ ENTITY LCD_DISPLAY_nty IS
 
 -- Declarations
 
-END LCD_DISPLAY_nty ;
+END lcdoct ;
 
 --
-ARCHITECTURE LCD_DISPLAY_arch OF LCD_DISPLAY_nty IS
+ARCHITECTURE LCD_DISPLAY_arch OF lcdoct IS
   type character_string is array ( 0 to 31 ) of STD_LOGIC_VECTOR( 7 downto 0 );
   
   type state_type is (hold, func_set, display_on, mode_set, print_string,
@@ -279,12 +279,50 @@ LCD_CHAR_ARRAY(3) <= LCD_CHAR_ARRAY_3;
 ---------------------------------------------------------------------------------------------------------------
 PROCESS (LCD_CHAR_ARRAY)
 BEGIN
+  
+-- get next character in display string based on the LCD_CHAR_ARRAY (switches or Multiplexer)
 
      CASE (LCD_CHAR_ARRAY) IS
           
           -- Bluetooth Disconnected
        WHEN "0000" =>
             next_char <= lcd_display_string_01(CONV_INTEGER(char_count));
+                                                                          
+          -- Bluetooth Connected                                                                                         
+       WHEN "0001" =>      
+            next_char <= lcd_display_string_02(CONV_INTEGER(char_count));
+            
+            -- CHARGING %25
+       WHEN "0010" =>      
+            next_char <= lcd_display_string_03(CONV_INTEGER(char_count));            
+            
+            -- CHARGING %50                                                           
+       WHEN "0011" =>      
+            next_char <= lcd_display_string_04(CONV_INTEGER(char_count));                                                                                                                         
+        
+            -- CHARGING %75
+       WHEN "0100"  =>      
+            next_char <= lcd_display_string_05(CONV_INTEGER(char_count));
+                
+            -- CHARGING %100        
+       WHEN "0101" =>
+           next_char <= lcd_display_string_06(CONV_INTEGER(char_count));
+              
+            -- Battery Level %25                                                                                           
+       WHEN "0110" =>      
+           next_char <= lcd_display_string_07(CONV_INTEGER(char_count));
+            
+           -- Battery Level %50   
+       WHEN "0111" =>      
+           next_char <= lcd_display_string_08(CONV_INTEGER(char_count)); 
+                            
+           -- Battery Level %75      
+       WHEN "1000" =>      
+           next_char <= lcd_display_string_09(CONV_INTEGER(char_count));
+                   
+           -- Battery Level %100  
+       WHEN "1001" =>      
+           next_char <= lcd_display_string_10(CONV_INTEGER(char_count));         
                                                                                                                               
                  --  BLUETOOTH CONTROLLER                                                                 
             WHEN OTHERS =>              
@@ -537,6 +575,3 @@ begin
 end process;                                                            
   
 END ARCHITECTURE LCD_DISPLAY_arch;
-
-
-          
